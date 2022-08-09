@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/anderson-4dev/ocean_front_and/issues"
   },
-  "homepage": "https://github.com/anderson-4dev/ocean_front_and#readme"
+  "homepage": "https://github.com/anderson-4dev/ocean_front_and#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
 }
