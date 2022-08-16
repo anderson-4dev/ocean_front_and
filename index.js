@@ -1,48 +1,46 @@
 const express = require("express");
-const app = express();
+const { MongoClient } = require("mongodb");
 
-//sinalizando que estamos usando json para o body das req
-app.use(express.json());
+const url = "mongodb+srv://admin:LdQHrR3iAM9u4Mtw@cluster0.ih1f4.mongodb.net";
+const dbName = "jf_anderson_silverio";
 
-app.get("/", function (req, res){
-    res.send("Hello Word");
-});
 
-const lista = [
-    {
-        id: 1,
-        nome: "Anderson",
-        pontos: 0
-    },
-    {
-        id: 2,
-        nome: "Davi",
-        pontos: 0
-    },
-    {
-        id: 3,
-        nome: "Sandra",
-        pontos: 0
-    },
-];
+async function main() {
+    //realizando a conection com o mongo cliente
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+    const collection = db.collection("pontuacoes");
 
-app.get("/pontuacoes", (req,res)=>{
+    //
+    const app = express();
 
-    res.send(lista);
-});
+    //sinalizando que estamos usando json para o body das req
+    app.use(express.json());
 
-app.post("/pontuacoes", (req,res)=>{
-    const item = req.body;
-
-    lista.push({
-        id: lista.length + 1,
-        nome: item.nome,
-        pontos: item.pontos
+    app.get("/", function (req, res) {
+        res.send("Hello Word");
     });
 
-    res.send("post");
-});
-//END POINT CREATE - [POST] /pontuacoes
-//END POINT CREATE - [GET] /pontuacoes
+    app.get("/pontuacoes", async (req, res) => {
+        const items = await collection
+        .find()//busca todos os registros da colection
+        .sort({ pontos: -1 })//organiza por ordem -1 decrecente ou 1 crecente
+        .limit(10)//limita a quantidade de resultados 
+        //.skip()//paginação
+        .toArray();
+        
+        res.send(items);
+    });
 
-app.listen(3000);
+    app.post("/pontuacoes", async (req, res) => {
+        const item = req.body;
+
+        await collection.insertOne(item);
+
+        res.send(item);
+    });
+
+    app.listen(3000);
+}
+
+main();
