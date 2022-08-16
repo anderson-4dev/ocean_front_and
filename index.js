@@ -1,15 +1,14 @@
 const express = require("express");
 const app = express();
 
+//sinalizando que estamos usando json para o body das req
+app.use(express.json());
+
 app.get("/", function (req, res){
     res.send("Hello Word");
 });
 
-app.get("/oi", function (req, res){
-    res.send("Oi mundo");
-});
-
-const users = [
+const lista = [
     {
         id: 1,
         nome: "Anderson",
@@ -29,9 +28,20 @@ const users = [
 
 app.get("/pontuacoes", (req,res)=>{
 
-    res.send("ssssss")
+    res.send(lista);
 });
 
+app.post("/pontuacoes", (req,res)=>{
+    const item = req.body;
+
+    lista.push({
+        id: lista.length + 1,
+        nome: item.nome,
+        pontos: item.pontos
+    });
+
+    res.send("post");
+});
 //END POINT CREATE - [POST] /pontuacoes
 //END POINT CREATE - [GET] /pontuacoes
 
